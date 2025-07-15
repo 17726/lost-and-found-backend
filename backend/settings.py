@@ -132,14 +132,12 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = True
 AUTH_USER_MODEL = 'users.User'# 自定义用户模型
-# CORS_ALLOW_HEADERS = [
-#     'accept',
-#     'accept-encoding',
-#     'authorization', # 必须包含 'authorization' (通常是小写)
-#     'content-type',
-#     'dnt',
-#     'origin',
-#     'user-agent',
-#     'x-csrftoken',
-#     'x-requested-with',
-# ]
+
+# Django处理媒体文件的根URL路径，前端将通过这个URL来请求图片
+# 例如：http://127.0.0.1:8000/media/item_images/foo.jpg
+MEDIA_URL = '/media/'
+
+# 媒体文件在服务器上存储的实际物理路径
+# BASE_DIR 指的是项目根目录（和 manage.py 同级）
+# 这里我们设置为 '项目根目录/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

@@ -1,8 +1,7 @@
-# items/urls.py
 from django.urls import path
-from .views import ItemListCreateView, ItemDetailView
+from .views import ItemListView
 
 urlpatterns = [
-    path('items/', ItemListCreateView.as_view(), name='item-list-create'),
-    path('items/<int:pk>/', ItemDetailView.as_view(), name='item-detail'),
+    # 将 GET /api/items/ 请求路由到 ItemListView
+    path('items/', ItemListView.as_view(), name='item-list'),
 ]

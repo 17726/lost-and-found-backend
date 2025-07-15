@@ -1,37 +1,30 @@
 from rest_framework import serializers
 from .models import Item
-from users.serializers import UserDetailSerializer # 从users app导入用户序列化器
+from users.serializers import UserDetailSerializer # 导入我们之前创建的用户序列化器
 
 class ItemSerializer(serializers.ModelSerializer):
-    # 使用我们之前在users app里定义的UserDetailSerializer
-    # 来处理user字段，实现嵌套显示
+    # 【核心】嵌套序列化器：用 UserDetailSerializer 来序列化 user 字段
+    # read_only=True 表示这个字段在反序列化（创建/更新）时是只读的
     user = UserDetailSerializer(read_only=True)
     
-    # 【重要】根据API文档，我们需要一个完整的图片URL
-    # image_url是只读的，它的值由下面的 get_image_url 方法动态生成
+    # 【核心】自定义字段：根据模型的 image 字段生成完整的 URL
+    # SerializerMethodField 允许我们自定义字段的输出
     image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Item
-        # fields = '__all__' 是一个快捷方式，表示包含所有模型字段
-        fields = '__all__'
+        # fields = '__all__' 表示序列化所有模型字段
+        fields = '__all__' 
+        # depth = 1 # 这是一个快捷但不灵活的嵌套方式，我们用嵌套序列化器代替
 
     def get_image_url(self, obj):
-        # 'obj' 是当前的Item实例
-        if obj.image:
-            # self.context['request'] 可以获取到当前的请求对象
-            request = self.context.get('request')
-            # request.build_absolute_uri 可以将相对路径拼接成完整的URL
+        """
+        生成图片的完整访问URL。
+        obj 是当前的 Item 实例。
+        """
+        request = self.context.get('request')
+        if request and obj.image and hasattr(obj.image, 'url'):
+            # request.build_absolute_uri 会将相对URL（如 /media/item_images/foo.jpg）
+            # 转换为完整的URL（如 http://127.0.0.1:8000/media/item_images/foo.jpg）
             return request.build_absolute_uri(obj.image.url)
-        return None # 如果没有图片，返回null
-
-    def validate(self, data):
-        # 实现“位置信息二选一”的后端校验
-        location = data.get('location')
-        latitude = data.get('latitude')
-        
-        # 在部分更新(PATCH)时，这些字段可能不存在，所以要用 .get()
-        # 并且只有在两者都明确为空时才报错
-        if not location and not latitude:
-            raise serializers.ValidationError("请至少提供地点描述或在地图上选点。")
-        return data
+        return None # 如果没有图片，返回 null

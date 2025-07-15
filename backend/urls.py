@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,3 +25,6 @@ urlpatterns = [
     path('api/', include('users.urls')),
     path('api/', include('items.urls')),
 ]
+if settings.DEBUG:
+    # 将 /media/ URL 路径映射到 MEDIA_ROOT 指定的物理目录
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
