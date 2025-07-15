@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # 当访问 /api/ 时，将请求转发给 users.urls 去处理
     path('api/', include('users.urls')),
+    path('api/', include('items.urls')),
 ]
