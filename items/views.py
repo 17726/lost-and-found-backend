@@ -49,3 +49,23 @@ class ItemListCreateView(generics.ListCreateAPIView):
         
         # 对于GET请求，允许任何人访问。
         return [permissions.AllowAny()]
+class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    【任务 2.3】 获取单个物品详情 (GET)
+    【任务 2.4】 修改物品信息 (PATCH)
+    【任务 2.5】 删除物品 (DELETE)
+    """
+    # queryset 和 serializer_class 是必须的，DRF会用它们来获取和序列化对象
+    queryset = Item.objects.all()
+    serializer_class = ItemSerializer
+    
+    # 【核心】这个视图默认对所有HTTP方法都要求认证。
+    # 我们需要重写 get_permissions 来实现对GET方法的公开访问。
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            # 如果是GET请求（获取详情），允许任何人访问
+            return [permissions.AllowAny()]
+        
+        # 对于PATCH和DELETE请求，必须是已认证用户
+        # （我们稍后在任务2.4/2.5中还会增加“必须是物品主人”的权限）
+        return [permissions.IsAuthenticated()]

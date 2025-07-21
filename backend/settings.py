@@ -147,7 +147,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
-    # ↓↓↓↓↓↓ 【核心新增内容】在这里添加默认的认证方式 ↓↓↓↓↓↓
+    #【核心新增内容】在这里添加默认的认证方式 
     'DEFAULT_AUTHENTICATION_CLASSES': [
         # 告诉DRF，首选的认证方式是Token认证
         'rest_framework.authentication.TokenAuthentication',
