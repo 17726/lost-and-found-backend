@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    'django_filters',
 
     # 我自己的应用
     'users.apps.UsersConfig',
@@ -53,7 +54,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',#CSRF保护
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -132,3 +133,23 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = True
 AUTH_USER_MODEL = 'users.User'# 自定义用户模型
+
+# Django处理媒体文件的根URL路径，前端将通过这个URL来请求图片
+# 例如：http://127.0.0.1:8000/media/item_images/foo.jpg
+MEDIA_URL = '/media/'
+
+# 媒体文件在服务器上存储的实际物理路径
+# BASE_DIR 指的是项目根目录（和 manage.py 同级）
+# 这里我们设置为 '项目根目录/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
+    #【核心新增内容】在这里添加默认的认证方式 
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 告诉DRF，首选的认证方式是Token认证
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
