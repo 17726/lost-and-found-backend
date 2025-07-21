@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    'django_filters',
 
     # 我自己的应用
     'users.apps.UsersConfig',
@@ -141,3 +142,9 @@ MEDIA_URL = '/media/'
 # BASE_DIR 指的是项目根目录（和 manage.py 同级）
 # 这里我们设置为 '项目根目录/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
+}
