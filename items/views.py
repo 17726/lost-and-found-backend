@@ -1,9 +1,9 @@
-
 from .serializers import ItemSerializer, ItemCreateSerializer 
 from rest_framework import generics, permissions, filters 
 import django_filters 
 from .models import Item
 from .filters import ItemFilter
+from .permissions import IsOwnerOrReadOnly
 
 # ListAPIView 专门用于处理“获取对象列表”的 GET 请求
 # 【修改】将视图基类从 ListAPIView 更改为 ListCreateAPIView
@@ -59,13 +59,11 @@ class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
     
-    # 【核心】这个视图默认对所有HTTP方法都要求认证。
-    # 我们需要重写 get_permissions 来实现对GET方法的公开访问。
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            # 如果是GET请求（获取详情），允许任何人访问
-            return [permissions.AllowAny()]
-        
-        # 对于PATCH和DELETE请求，必须是已认证用户
-        # （我们稍后在任务2.4/2.5中还会增加“必须是物品主人”的权限）
-        return [permissions.IsAuthenticated()]
+    # 将权限类设置为我们自定义的 IsOwnerOrReadOnly
+    # 它已经包含了对GET方法的判断，所以我们不再需要 get_permissions 方法了
+    permission_classes = [IsOwnerOrReadOnly]
+    # 这个视图默认对所有HTTP方法都要求认证。
+    # def get_permissions(self):
+    #     if self.request.method == 'GET':
+    #         return [permissions.AllowAny()]
+    #     return [permissions.IsAuthenticated()]
